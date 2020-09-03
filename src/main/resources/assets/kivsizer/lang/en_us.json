@@ -1,0 +1,15 @@
+{
+  "keys.kivsizer.category": "kivsizer",
+  "keys.kivsizer.charge": "Charge",
+  "keys.kivsizer.release": "Release",
+  "keys.kivsizer.explode": "Explode",
+  "itemGroup.KivTab": "KivSizer Tab",
+  "item.kivsizer.pizza_cutter": "The Pizza Cutter",
+  "item.kivsizer.pizza_blender": "The Pizza Blender",
+  "item.kivsizer.sinkhole_drill": "Sinkhole Drill",
+  "item.kivsizer.rocket_launcher": "Rocket Launcher",
+  "item.kivsizer.fireball_bow": "Fireball Bow",
+  "item.kivsizer.tnt_bow": "TNT Bow",
+  "item.kivsizer.bowblazer": "Bowblazer",
+  "enchantment.kivsizer.sink_hole": "Sink Hole"
+}

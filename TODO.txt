@@ -1,0 +1,2 @@
+- Lav liste over spillere som joiner og leaver. Til brug af drilling og falldamage.
+- Lav blaze bue maskinegevær/shotgun
