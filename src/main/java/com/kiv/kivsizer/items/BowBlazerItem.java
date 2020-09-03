@@ -1,6 +1,8 @@
 package com.kiv.kivsizer.items;
 
 import com.kiv.kivsizer.KivSizer;
+import com.kiv.kivsizer.entities.BowBlazerBall;
+import com.kiv.kivsizer.util.RegistryHandler;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.enchantment.Enchantments;
 import net.minecraft.entity.LivingEntity;
@@ -67,17 +69,18 @@ public class BowBlazerItem extends BowItem {
 
                         Vector3d look = entityLiving.getLookVec();
 
-                        KivSizer.LOGGER.info("f is equal to: " + f);
+                        //KivSizer.LOGGER.info("f is equal to: " + f);
                         if (playerentity.isCrouching()) {
-                            SmallFireballEntity smallFireballEntity = new SmallFireballEntity(worldIn, playerentity, (look.x * 1.0D) + (Math.random() - 0.5D) / 5, look.y * 1.0D + (Math.random() - 0.5D) / 5, look.z * 1.0D + (Math.random() - 0.5D) / 5);
+                            BowBlazerBall smallFireballEntity = new BowBlazerBall(worldIn, playerentity, (look.x * 1.0D) + (Math.random() - 0.5D) / 5, look.y * 1.0D + (Math.random() - 0.5D) / 5, look.z * 1.0D + (Math.random() - 0.5D) / 5);
                             smallFireballEntity.setPosition(smallFireballEntity.getPosX(), smallFireballEntity.getPosY() + 1, smallFireballEntity.getPosZ());
                             worldIn.addEntity(smallFireballEntity);
                             worldIn.playSound((PlayerEntity)null, playerentity.getPosX(), playerentity.getPosY(), playerentity.getPosZ(), SoundEvents.ENTITY_BLAZE_SHOOT, SoundCategory.PLAYERS, 1.0F, 1.0F / (random.nextFloat() * 0.4F + 1.2F) + f * 0.5F);
                             BowBlazerMG.PlayersShooting.add(playerentity);
                             BowBlazerMG.BallsLeft.add((int) (f * 10));
+                            BowBlazerMG.CheckHolding.add(playerentity.getHeldItemMainhand());
                         } else {
                             for (int j = 0; j < f * 10; j++) {
-                                SmallFireballEntity smallFireballEntity = new SmallFireballEntity(worldIn, playerentity, (look.x * 1.0D * f) + (Math.random() - 0.5D) / 5, look.y * 1.0D * f + (Math.random() - 0.5D) / 5, look.z * 1.0D * f + (Math.random() - 0.5D) / 5);
+                                BowBlazerBall smallFireballEntity = new BowBlazerBall(worldIn, playerentity, (look.x * 1.0D * f) + (Math.random() - 0.5D) / 5, look.y * 1.0D * f + (Math.random() - 0.5D) / 5, look.z * 1.0D * f + (Math.random() - 0.5D) / 5);
                                 //smallFireballEntity.setVelocity(look.x * 1.0D * f, look.y * 1.0D * f, look.z * 1.0D * f);
                                 smallFireballEntity.setPosition(smallFireballEntity.getPosX(), smallFireballEntity.getPosY() + 1, smallFireballEntity.getPosZ());
                                 worldIn.addEntity(smallFireballEntity);
@@ -103,27 +106,34 @@ public class BowBlazerItem extends BowItem {
 
         public static ArrayList<PlayerEntity> PlayersShooting = new ArrayList<PlayerEntity>();
         public static ArrayList<Integer> BallsLeft = new ArrayList<Integer>();
+        public static ArrayList<ItemStack> CheckHolding = new ArrayList<ItemStack>();
 
         @SubscribeEvent
         public static void BowBlazerMGShoot(TickEvent.PlayerTickEvent event){
             if (!PlayersShooting.isEmpty() && (KivSizer.TickCounter == 7 || KivSizer.TickCounter == 3)) {
                 KivSizer.LOGGER.info("PlayersShooting was not empty!");
-                KivSizer.LOGGER.info("PlayersShooting was not empty!");
                 for (Integer balls : BallsLeft){
                     KivSizer.LOGGER.info("Element in BallsLeft: " + balls);
                 }
                 boolean NeedCleaning = false;
-                for (int i = 0; i < PlayersShooting.size(); i++){
+                int i = 0;
+                for (PlayerEntity playerEntity : PlayersShooting){
                     if (PlayersShooting.get(i) == event.player) {
-                        KivSizer.LOGGER.info("Should have shot!");
-                        PlayerEntity player = event.player;
-                        World world = player.getEntityWorld();
-                        Vector3d look = player.getLookVec();
-                        BallsLeft.set(i, BallsLeft.get(i) - 1);
-                        SmallFireballEntity smallFireballEntity = new SmallFireballEntity(world, player, (look.x * 1.0D) + (Math.random() - 0.5D) / 5, look.y * 1.0D + (Math.random() - 0.5D) / 5, look.z * 1.0D + (Math.random() - 0.5D) / 5);
-                        smallFireballEntity.setPosition(smallFireballEntity.getPosX(), smallFireballEntity.getPosY() + 1, smallFireballEntity.getPosZ());
-                        world.addEntity(smallFireballEntity);
-                        world.playSound((PlayerEntity)null, player.getPosX(), player.getPosY(), player.getPosZ(), SoundEvents.ENTITY_BLAZE_SHOOT, SoundCategory.PLAYERS, 1.0F, 1.0F / (random.nextFloat() * 0.4F + 1.2F) + (BallsLeft.get(i) / 10) * 0.5F);
+                        if (CheckHolding.get(i) != event.player.getHeldItemMainhand()) {
+                            KivSizer.LOGGER.info("Cleaning was set to true!");
+                            NeedCleaning = true;
+                        } else {
+                            //KivSizer.LOGGER.info("Should have shot!");
+                            PlayerEntity player = event.player;
+                            World world = player.getEntityWorld();
+                            Vector3d look = player.getLookVec();
+                            BallsLeft.set(i, BallsLeft.get(i) - 1);
+                            BowBlazerBall smallFireballEntity = new BowBlazerBall(world, player, (look.x * 1.0D) + (Math.random() - 0.5D) / 5, look.y * 1.0D + (Math.random() - 0.5D) / 5, look.z * 1.0D + (Math.random() - 0.5D) / 5);
+                            smallFireballEntity.setPosition(smallFireballEntity.getPosX(), smallFireballEntity.getPosY() + 1, smallFireballEntity.getPosZ());
+                            world.addEntity(smallFireballEntity);
+                            world.playSound((PlayerEntity)null, player.getPosX(), player.getPosY(), player.getPosZ(), SoundEvents.ENTITY_BLAZE_SHOOT, SoundCategory.PLAYERS, 1.0F, 1.0F / (random.nextFloat() * 0.4F + 1.2F) + (BallsLeft.get(i) / 10) * 0.5F);
+                        }
+
                         if (BallsLeft.get(i) <= 0){
                             KivSizer.LOGGER.info("Cleaning was set to true!");
                             NeedCleaning = true;
@@ -132,8 +142,15 @@ public class BowBlazerItem extends BowItem {
                 }
                 if (NeedCleaning) {
                     KivSizer.LOGGER.info("Cleaned BowBlazerMG");
-                    PlayersShooting.remove(0);
-                    BallsLeft.remove(0);
+                    try {
+                        PlayersShooting.remove(i);
+                        BallsLeft.remove(i);
+                        CheckHolding.remove(i);
+                    } catch (Exception e) {
+                        PlayersShooting.remove(0);
+                        BallsLeft.remove(0);
+                        CheckHolding.remove(0);
+                    }
                 }
             }
         }

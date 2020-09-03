@@ -185,48 +185,49 @@ public class ModClientEvents {
         }
 
         // Sinkhole Enchantment handling
-        ArrayList<Integer> CleanupList = new ArrayList<Integer>();
-        if (!DrillSites.isEmpty() && KivSizer.TickCounter == 0) {
-            //int i = 0;
-            for (BlockPos[] DrillArr : DrillSites) {
-                World world = AttToPlayer.get(HoleLinkage).getEntityWorld();
-                Boolean PlacesBlocks = false;
-                BlockState BlockToPlace = Blocks.DIRT.getDefaultState();
-                if (EnchantLevel.get(HoleLinkage) > 2) {
-                    PlacesBlocks = true;
-                    switch (EnchantLevel.get(HoleLinkage)){
-                        case 3:
-                            BlockToPlace = Blocks.DIRT.getDefaultState();
-                            break;
-                        case 4:
-                            BlockToPlace = Blocks.COBBLESTONE.getDefaultState();
-                            break;
-                        case 5:
-                            BlockToPlace = Blocks.OBSIDIAN.getDefaultState();
-                            break;
-                        default:
-                    }
-                }
-                if (DrillDepth.get(HoleLinkage) < 5 * EnchantLevel.get(HoleLinkage) / 2 + 0.5f){
-                    //KivSizer.LOGGER.info("I is equal to: " + i);
-                    for (BlockPos pos : DrillArr) {
-                        if (world.getBlockState(pos.add(0,DrillDepth.get(HoleLinkage) * -1,0)) != Blocks.BEDROCK.getDefaultState() && world.getBlockState(pos.add(0,DrillDepth.get(HoleLinkage) * -1,0)) != Blocks.AIR.getDefaultState()) {
-                            world.destroyBlock(pos.add(0,DrillDepth.get(HoleLinkage) * -1,0),false,AttToPlayer.get(HoleLinkage));
-                            //KivSizer.LOGGER.info("Destoyed block at: " + pos);
-                        }
-                        if (PlacesBlocks && DrillDepth.get(HoleLinkage) > 3){
-                            world.setBlockState(pos.add(0,(DrillDepth.get(HoleLinkage)-4) * -1,0), BlockToPlace);
+        try {
+            ArrayList<Integer> CleanupList = new ArrayList<Integer>();
+            if (!DrillSites.isEmpty() && KivSizer.TickCounter == 0) {
+                //int i = 0;
+                for (BlockPos[] DrillArr : DrillSites) {
+                    World world = AttToPlayer.get(HoleLinkage).getEntityWorld();
+                    boolean PlacesBlocks = false;
+                    BlockState BlockToPlace = Blocks.DIRT.getDefaultState();
+                    if (EnchantLevel.get(HoleLinkage) > 2) {
+                        PlacesBlocks = true;
+                        switch (EnchantLevel.get(HoleLinkage)) {
+                            case 3:
+                                BlockToPlace = Blocks.DIRT.getDefaultState();
+                                break;
+                            case 4:
+                                BlockToPlace = Blocks.COBBLESTONE.getDefaultState();
+                                break;
+                            case 5:
+                                BlockToPlace = Blocks.OBSIDIAN.getDefaultState();
+                                break;
+                            default:
                         }
                     }
-                    SinkHoleTargets.get(HoleLinkage).setVelocity(0,-1,0);
-                    DrillDepth.set(HoleLinkage, DrillDepth.get(HoleLinkage) + 1);
-                    //KivSizer.LOGGER.info("Should drill at depth: " + DrillDepth.get(i) * -1);
-                    HoleLinkage++;
-                    if (HoleLinkage == DrillSites.size()) {
-                        HoleLinkage = 0;
-                    }
-                }else{
-                   CleanupList.add(HoleLinkage);
+                    if (DrillDepth.get(HoleLinkage) < 5 * EnchantLevel.get(HoleLinkage) / 2 + 0.5f) {
+                        //KivSizer.LOGGER.info("I is equal to: " + i);
+                        for (BlockPos pos : DrillArr) {
+                            if (world.getBlockState(pos.add(0, DrillDepth.get(HoleLinkage) * -1, 0)) != Blocks.BEDROCK.getDefaultState() && world.getBlockState(pos.add(0, DrillDepth.get(HoleLinkage) * -1, 0)) != Blocks.AIR.getDefaultState()) {
+                                world.destroyBlock(pos.add(0, DrillDepth.get(HoleLinkage) * -1, 0), false, AttToPlayer.get(HoleLinkage));
+                                //KivSizer.LOGGER.info("Destoyed block at: " + pos);
+                            }
+                            if (PlacesBlocks && DrillDepth.get(HoleLinkage) > 3) {
+                                world.setBlockState(pos.add(0, (DrillDepth.get(HoleLinkage) - 4) * -1, 0), BlockToPlace);
+                            }
+                        }
+                        SinkHoleTargets.get(HoleLinkage).setVelocity(0, -1, 0);
+                        DrillDepth.set(HoleLinkage, DrillDepth.get(HoleLinkage) + 1);
+                        //KivSizer.LOGGER.info("Should drill at depth: " + DrillDepth.get(i) * -1);
+                        HoleLinkage++;
+                        if (HoleLinkage == DrillSites.size()) {
+                            HoleLinkage = 0;
+                        }
+                    } else {
+                        CleanupList.add(HoleLinkage);
                    /*if (EnchantLevel.get(i) > 4){
                        for (BlockPos pos : DrillArr){
                            if (world.getBlockState(pos.add(0,DrillDepth.get(i) * -1,0)) != Blocks.BEDROCK.getDefaultState()) {
@@ -234,16 +235,24 @@ public class ModClientEvents {
                            }
                        }
                    }*/
-                   //KivSizer.LOGGER.info("DrillDepth " + i + " was " + DrillDepth.get(i));
+                        //KivSizer.LOGGER.info("DrillDepth " + i + " was " + DrillDepth.get(i));
+                    }
                 }
             }
-        }
-        if (!CleanupList.isEmpty()){
+            if (!CleanupList.isEmpty()) {
                 DrillSites.remove(0);
                 DrillDepth.remove(0);
                 AttToPlayer.remove(0);
                 SinkHoleTargets.remove(0);
                 EnchantLevel.remove(0);
+            }
+        } catch (Exception e) {
+            KivSizer.LOGGER.info("Something about sinkholes went wrong. All sinkholes have been cleared. Exeption: " + e);
+            DrillSites.clear();
+            DrillDepth.clear();
+            AttToPlayer.clear();
+            SinkHoleTargets.clear();
+            EnchantLevel.clear();
         }
 
     }

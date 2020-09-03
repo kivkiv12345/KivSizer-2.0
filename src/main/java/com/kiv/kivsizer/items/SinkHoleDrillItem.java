@@ -39,28 +39,6 @@ public class SinkHoleDrillItem extends SwordItem {
 
     @Override
     public boolean hitEntity(ItemStack stack, LivingEntity target, LivingEntity attacker) {
-        /*new Thread(() -> {
-            BlockPos drillPos = target.func_233580_cy_().add(0, -1, 0);
-            World world = target.getEntityWorld();
-            int TickCheck = 0;
-            for (int HoleDepth = 0; HoleDepth < 10;){
-                if (TickCheck != KivSizer.TickCounter) {
-                    TickCheck = KivSizer.TickCounter;
-                    BlockPos[] drillArray = {drillPos.add(0, 0 - HoleDepth, 0), drillPos.add(1, 0 - HoleDepth, -1), drillPos.add(1, 0 - HoleDepth, 0), drillPos.add(1, 0 - HoleDepth, 1), drillPos.add(0, 0 - HoleDepth, -1), drillPos.add(0, 0 - HoleDepth, 1), drillPos.add(-1, 0 - HoleDepth, -1), drillPos.add(-1, 0 - HoleDepth, 0), drillPos.add(-1, 0 - HoleDepth, 1)};
-                    for (BlockPos pos : drillArray) {
-                        if (world.getBlockState(pos) != Blocks.BEDROCK.getDefaultState() && world.getBlockState(pos) != Blocks.AIR.getDefaultState()) {
-                            world.destroyBlock(pos, false, attacker);
-                        }
-                        //ModServerEvents.DrillOnServer(((PlayerEntity) player), drillPos, world, willDrop);
-                    }
-                    HoleDepth++;
-                    KivSizer.LOGGER.info("HoleDepth is at: " + HoleDepth);
-                }
-            }
-            stack.damageItem(stack.getMaxDamage() / 5, attacker, Entity::func_233575_bb_);
-            KivSizer.LOGGER.info("Item should be damaged!");
-        }).start();*/
-
         target.setVelocity(0, -1, 0);
         BlockPos drillPos = target.getPosition().add(0,-1,0);
         BlockPos[] drillArray = {drillPos, drillPos.add(1, 0, -1), drillPos.add(1, 0, 0), drillPos.add(1, 0, 1), drillPos.add(0, 0, -1), drillPos.add(0, 0, 1), drillPos.add(-1, 0, -1), drillPos.add(-1, 0, 0), drillPos.add(-1, 0, 1)};
