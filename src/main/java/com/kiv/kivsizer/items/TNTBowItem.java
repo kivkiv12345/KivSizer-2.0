@@ -28,7 +28,7 @@ public class TNTBowItem extends BowItem {
     public static PlayerEntity bowHolder = null;
 
     public TNTBowItem(Properties builder) {
-        super(builder);
+        super(builder.maxDamage(200));
     }
 
     @Override

@@ -1,5 +1,6 @@
 package com.kiv.kivsizer.util;
 
+import com.google.common.collect.ImmutableSet;
 import com.kiv.kivsizer.KivSizer;
 import com.kiv.kivsizer.enchantments.SinkHoleEnchantment;
 import com.kiv.kivsizer.items.*;
@@ -11,11 +12,14 @@ import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.BowItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.SwordItem;
+import net.minecraft.item.ToolItem;
 import net.minecraft.potion.Effect;
 import net.minecraftforge.fml.RegistryObject;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
+
+import java.util.Set;
 
 public class RegistryHandler {
     public static DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, KivSizer.MOD_ID);
@@ -34,6 +38,8 @@ public class RegistryHandler {
     //public static final RegistryObject<Item> FIREBALL_BOW = ITEMS.register("fireball_bow", ItemBase::new);
 
     // Tools
+    private static final Set<Block> EFFECTIVE_ON_NONE = ImmutableSet.of();
+
     public static final RegistryObject<SwordItem> PIZZA_CUTTER = ITEMS.register("pizza_cutter", () ->
             new SwordItem(ModItemTier.SIZERTOOLS, 4, -2.4F, new Item.Properties().group(KivSizer.TAB)));
     public static final RegistryObject<SwordItem> PIZZA_BLENDER = ITEMS.register("pizza_blender", () ->
@@ -48,6 +54,8 @@ public class RegistryHandler {
             new TNTBowItem(new Item.Properties().group(KivSizer.TAB)));
     public static final RegistryObject<BowItem> BOWBLAZER = ITEMS.register("bowblazer", () ->
             new BowBlazerItem(new Item.Properties().group(KivSizer.TAB)));
+    public static final RegistryObject<ToolItem> SLICESLICER = ITEMS.register("sliceslicer", () ->
+            new SliceSlicerItem(0,-2.4f, ModItemTier.SIZERTOOLS, EFFECTIVE_ON_NONE, new Item.Properties().group(KivSizer.TAB).maxDamage(200)));
 
     // Blocks
 

@@ -31,7 +31,7 @@ public class BowBlazerItem extends BowItem {
     public static PlayerEntity bowHolder = null;*/
 
     public BowBlazerItem(Properties builder) {
-        super(builder);
+        super(builder.maxDamage(200));
     }
 
     @Override
