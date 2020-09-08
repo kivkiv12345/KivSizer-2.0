@@ -32,8 +32,8 @@ public class SliceSlicerItem extends ToolItem {
 
     public static SliceSlicerClass[] UsableClasses = {
             new SliceSlicerClass(Blocks.OAK_LOG, Items.STICK, 5, 4, 6),
-            new SliceSlicerClass(Blocks.STONE, Items.FLINT, 10, 1, 3)
-            //new SliceSlicerClass(Blocks.DIORITE, Items.DIAMOND_BOOTS, 10, 1, 1)
+            new SliceSlicerClass(Blocks.STONE, Items.FLINT, 10, 1, 3),
+            new SliceSlicerClass(Blocks.DIORITE, Items.DIAMOND, 10, 1, 1)
     };
 
     @Override
@@ -51,7 +51,6 @@ public class SliceSlicerItem extends ToolItem {
             //KivSizer.LOGGER.info("Checking if used on " + block);
             //KivSizer.LOGGER.info("Chceking if " + LastUsedOn + " == " + context.getPos());
             KivSizer.LOGGER.info(currentclass.block);
-            KivSizer.LOGGER.info(SliceSlicerClass.block);
 
             if (currentclass.block.getDefaultState() == context.getWorld().getBlockState(context.getPos())) {
                 KivSizer.LOGGER.info("Block match was found!");

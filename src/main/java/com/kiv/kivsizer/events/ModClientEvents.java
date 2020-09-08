@@ -1,6 +1,7 @@
 package com.kiv.kivsizer.events;
 
 import com.kiv.kivsizer.KivSizer;
+import com.kiv.kivsizer.util.SinkHoleDrillClass;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.material.Material;
@@ -38,12 +39,14 @@ public class ModClientEvents {
     public static int BootLinkage = 0;
 
     // Sink holes
-    public static ArrayList<BlockPos[]> DrillSites = new ArrayList<BlockPos[]>();
+    /*public static ArrayList<BlockPos[]> DrillSites = new ArrayList<BlockPos[]>();
     public static ArrayList<Integer> DrillDepth = new ArrayList<Integer>();
     public static ArrayList<PlayerEntity> AttToPlayer = new ArrayList<PlayerEntity>();
     public static ArrayList<LivingEntity> SinkHoleTargets = new ArrayList<>();
     public static ArrayList<Integer> EnchantLevel = new ArrayList<>();
-    public static int HoleLinkage = 0;
+    public static int HoleLinkage = 0;*/
+
+    public static ArrayList<SinkHoleDrillClass> DrillSites = new ArrayList<>();
 
     //KeyTest //Unfinished
     /*@SubscribeEvent
@@ -189,13 +192,13 @@ public class ModClientEvents {
             ArrayList<Integer> CleanupList = new ArrayList<Integer>();
             if (!DrillSites.isEmpty() && KivSizer.TickCounter == 0) {
                 //int i = 0;
-                for (BlockPos[] DrillArr : DrillSites) {
-                    World world = AttToPlayer.get(HoleLinkage).getEntityWorld();
+                for (SinkHoleDrillClass CurrentSite : DrillSites) {
+                    World world = CurrentSite.AttToPlayer.getEntityWorld();
                     boolean PlacesBlocks = false;
                     BlockState BlockToPlace = Blocks.DIRT.getDefaultState();
-                    if (EnchantLevel.get(HoleLinkage) > 2) {
+                    if (CurrentSite.EnchantLevel > 2) {
                         PlacesBlocks = true;
-                        switch (EnchantLevel.get(HoleLinkage)) {
+                        switch (CurrentSite.EnchantLevel) {
                             case 3:
                                 BlockToPlace = Blocks.DIRT.getDefaultState();
                                 break;
@@ -208,9 +211,9 @@ public class ModClientEvents {
                             default:
                         }
                     }
-                    if (DrillDepth.get(HoleLinkage) < 5 * EnchantLevel.get(HoleLinkage) / 2 + 0.5f) {
+                    if (CurrentSite.DrillDepth < 5 * CurrentSite.EnchantLevel / 2 + 0.5f) {
                         //KivSizer.LOGGER.info("I is equal to: " + i);
-                        for (BlockPos pos : DrillArr) {
+                        for (BlockPos pos : CurrentSite.DrillSites) {
                             if (world.getBlockState(pos.add(0, DrillDepth.get(HoleLinkage) * -1, 0)) != Blocks.BEDROCK.getDefaultState() && world.getBlockState(pos.add(0, DrillDepth.get(HoleLinkage) * -1, 0)) != Blocks.AIR.getDefaultState()) {
                                 world.destroyBlock(pos.add(0, DrillDepth.get(HoleLinkage) * -1, 0), false, AttToPlayer.get(HoleLinkage));
                                 //KivSizer.LOGGER.info("Destoyed block at: " + pos);
