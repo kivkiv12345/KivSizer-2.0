@@ -2,6 +2,7 @@ package com.kiv.kivsizer.items;
 
 import com.kiv.kivsizer.events.ModClientEvents;
 import com.kiv.kivsizer.tools.ModItemTier;
+import com.kiv.kivsizer.util.SinkHoleDrillClass;
 import com.kiv.kivsizer.util.helpers.KeyboardHelper;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.Entity;
@@ -42,11 +43,7 @@ public class SinkHoleDrillItem extends SwordItem {
         target.setVelocity(0, -1, 0);
         BlockPos drillPos = target.getPosition().add(0,-1,0);
         BlockPos[] drillArray = {drillPos, drillPos.add(1, 0, -1), drillPos.add(1, 0, 0), drillPos.add(1, 0, 1), drillPos.add(0, 0, -1), drillPos.add(0, 0, 1), drillPos.add(-1, 0, -1), drillPos.add(-1, 0, 0), drillPos.add(-1, 0, 1)};
-        ModClientEvents.DrillSites.add(drillArray);
-        ModClientEvents.DrillDepth.add(0);
-        ModClientEvents.AttToPlayer.add((PlayerEntity) attacker);
-        ModClientEvents.SinkHoleTargets.add(target);
-        ModClientEvents.EnchantLevel.add(1);
+        ModClientEvents.DrillSites.add(new SinkHoleDrillClass(drillArray, 0, (PlayerEntity) attacker, target, 1));
         stack.damageItem(stack.getMaxDamage() / 5, attacker, Entity::extinguish);
         return super.hitEntity(stack, target, attacker);
     }

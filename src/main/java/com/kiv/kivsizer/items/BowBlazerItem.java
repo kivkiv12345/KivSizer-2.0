@@ -2,6 +2,7 @@ package com.kiv.kivsizer.items;
 
 import com.kiv.kivsizer.KivSizer;
 import com.kiv.kivsizer.entities.BowBlazerBall;
+import com.kiv.kivsizer.util.BowBlazerClass;
 import com.kiv.kivsizer.util.RegistryHandler;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.enchantment.Enchantments;
@@ -75,9 +76,10 @@ public class BowBlazerItem extends BowItem {
                             smallFireballEntity.setPosition(smallFireballEntity.getPosX(), smallFireballEntity.getPosY() + 1, smallFireballEntity.getPosZ());
                             worldIn.addEntity(smallFireballEntity);
                             worldIn.playSound((PlayerEntity)null, playerentity.getPosX(), playerentity.getPosY(), playerentity.getPosZ(), SoundEvents.ENTITY_BLAZE_SHOOT, SoundCategory.PLAYERS, 1.0F, 1.0F / (random.nextFloat() * 0.4F + 1.2F) + f * 0.5F);
-                            BowBlazerMG.PlayersShooting.add(playerentity);
+                            BowBlazerMG.PlayersShooting.add(new BowBlazerClass(playerentity, (int) (f * 10), playerentity.getHeldItemMainhand()));
+                            /*BowBlazerMG.PlayersShooting.add(playerentity);
                             BowBlazerMG.BallsLeft.add((int) (f * 10));
-                            BowBlazerMG.CheckHolding.add(playerentity.getHeldItemMainhand());
+                            BowBlazerMG.CheckHolding.add(playerentity.getHeldItemMainhand());*/
                         } else {
                             for (int j = 0; j < f * 10; j++) {
                                 BowBlazerBall smallFireballEntity = new BowBlazerBall(worldIn, playerentity, (look.x * 1.0D * f) + (Math.random() - 0.5D) / 5, look.y * 1.0D * f + (Math.random() - 0.5D) / 5, look.z * 1.0D * f + (Math.random() - 0.5D) / 5);
@@ -104,52 +106,43 @@ public class BowBlazerItem extends BowItem {
     @Mod.EventBusSubscriber(modid = KivSizer.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)
     public static class BowBlazerMG {
 
-        public static ArrayList<PlayerEntity> PlayersShooting = new ArrayList<PlayerEntity>();
-        public static ArrayList<Integer> BallsLeft = new ArrayList<Integer>();
-        public static ArrayList<ItemStack> CheckHolding = new ArrayList<ItemStack>();
+        public static ArrayList<BowBlazerClass> PlayersShooting = new ArrayList<>();
 
         @SubscribeEvent
         public static void BowBlazerMGShoot(TickEvent.PlayerTickEvent event){
             if (!PlayersShooting.isEmpty() && (KivSizer.TickCounter == 7 || KivSizer.TickCounter == 3)) {
                 KivSizer.LOGGER.info("PlayersShooting was not empty!");
-                for (Integer balls : BallsLeft){
-                    KivSizer.LOGGER.info("Element in BallsLeft: " + balls);
-                }
-                boolean NeedCleaning = false;
+                ArrayList<BowBlazerClass> CleanupList = new ArrayList<>();
                 int i = 0;
-                for (PlayerEntity playerEntity : PlayersShooting){
-                    if (PlayersShooting.get(i) == event.player) {
-                        if (CheckHolding.get(i) != event.player.getHeldItemMainhand()) {
+                for (BowBlazerClass CurrentClass : PlayersShooting){
+                    if (CurrentClass.Shooter == event.player) {
+                        if (CurrentClass.CheckHolding != event.player.getHeldItemMainhand()) {
                             KivSizer.LOGGER.info("Cleaning was set to true!");
-                            NeedCleaning = true;
+                            CleanupList.add(CurrentClass);
                         } else {
-                            //KivSizer.LOGGER.info("Should have shot!");
                             PlayerEntity player = event.player;
                             World world = player.getEntityWorld();
                             Vector3d look = player.getLookVec();
-                            BallsLeft.set(i, BallsLeft.get(i) - 1);
+                            CurrentClass.BallsLeft = CurrentClass.BallsLeft - 1;
                             BowBlazerBall smallFireballEntity = new BowBlazerBall(world, player, (look.x * 1.0D) + (Math.random() - 0.5D) / 5, look.y * 1.0D + (Math.random() - 0.5D) / 5, look.z * 1.0D + (Math.random() - 0.5D) / 5);
                             smallFireballEntity.setPosition(smallFireballEntity.getPosX(), smallFireballEntity.getPosY() + 1, smallFireballEntity.getPosZ());
                             world.addEntity(smallFireballEntity);
-                            world.playSound((PlayerEntity)null, player.getPosX(), player.getPosY(), player.getPosZ(), SoundEvents.ENTITY_BLAZE_SHOOT, SoundCategory.PLAYERS, 1.0F, 1.0F / (random.nextFloat() * 0.4F + 1.2F) + (BallsLeft.get(i) / 10) * 0.5F);
+                            world.playSound((PlayerEntity)null, player.getPosX(), player.getPosY(), player.getPosZ(), SoundEvents.ENTITY_BLAZE_SHOOT, SoundCategory.PLAYERS, 1.0F, 1.0F / (random.nextFloat() * 0.4F + 1.2F) + (CurrentClass.BallsLeft / 10) * 0.5F);
                         }
 
-                        if (BallsLeft.get(i) <= 0){
+                        if (CurrentClass.BallsLeft <= 0){
                             KivSizer.LOGGER.info("Cleaning was set to true!");
-                            NeedCleaning = true;
+                            CleanupList.add(CurrentClass);
                         }
                     }
                 }
-                if (NeedCleaning) {
-                    KivSizer.LOGGER.info("Cleaned BowBlazerMG");
+                if (!CleanupList.isEmpty()) {
                     try {
-                        PlayersShooting.remove(i);
-                        BallsLeft.remove(i);
-                        CheckHolding.remove(i);
-                    } catch (Exception e) {
-                        PlayersShooting.remove(0);
-                        BallsLeft.remove(0);
-                        CheckHolding.remove(0);
+                        for (BowBlazerClass cleancurrent : CleanupList) {
+                            PlayersShooting.remove(cleancurrent);
+                        }
+                    } catch (Exception e){
+
                     }
                 }
             }

@@ -15,6 +15,6 @@ public class SliceSlicerClass {
         this.HarvestResults = itemIn;
         this.MaxHarvestUses = MaxHarvestUses;
         this.minDrops = minDrops;
-        this.maxDrops = maxDrops;
+        this.maxDrops = MaxDrops;
     }
 }

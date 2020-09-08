@@ -3,6 +3,7 @@ package com.kiv.kivsizer.enchantments;
 import com.kiv.kivsizer.KivSizer;
 import com.kiv.kivsizer.events.ModClientEvents;
 import com.kiv.kivsizer.util.RegistryHandler;
+import com.kiv.kivsizer.util.SinkHoleDrillClass;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.enchantment.EnchantmentType;
@@ -14,6 +15,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import org.lwjgl.system.CallbackI;
 
 public class SinkHoleEnchantment extends Enchantment {
 
@@ -43,11 +45,7 @@ public class SinkHoleEnchantment extends Enchantment {
                     target.setVelocity(0, -1, 0);
                     BlockPos drillPos = target.getPosition().add(0,-1,0);
                     BlockPos[] drillArray = {drillPos, drillPos.add(1, 0, -1), drillPos.add(1, 0, 0), drillPos.add(1, 0, 1), drillPos.add(0, 0, -1), drillPos.add(0, 0, 1), drillPos.add(-1, 0, -1), drillPos.add(-1, 0, 0), drillPos.add(-1, 0, 1)};
-                    ModClientEvents.DrillSites.add(drillArray);
-                    ModClientEvents.DrillDepth.add(0);
-                    ModClientEvents.AttToPlayer.add((PlayerEntity) player);
-                    ModClientEvents.SinkHoleTargets.add((LivingEntity) target);
-                    ModClientEvents.EnchantLevel.add(EnchantmentHelper.getEnchantmentLevel(RegistryHandler.SINK_HOLE.get(), player.getItemStackFromSlot(EquipmentSlotType.MAINHAND)));
+                    ModClientEvents.DrillSites.add(new SinkHoleDrillClass(drillArray, 0, (PlayerEntity) player, (LivingEntity) target, EnchantmentHelper.getEnchantmentLevel(RegistryHandler.SINK_HOLE.get(), player.getItemStackFromSlot(EquipmentSlotType.MAINHAND))));
                     player.getHeldItemMainhand().damageItem(player.getHeldItemMainhand().getMaxDamage() / 8, player, Entity::extinguish);
                     player.getCooldownTracker().setCooldown(player.getHeldItemMainhand().getItem(), 40);
                 }
