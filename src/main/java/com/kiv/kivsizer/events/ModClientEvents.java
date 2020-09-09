@@ -2,6 +2,7 @@ package com.kiv.kivsizer.events;
 
 import com.kiv.kivsizer.KivSizer;
 import com.kiv.kivsizer.util.SinkHoleDrillClass;
+import com.kiv.kivsizer.util.TrackedArrowsClass;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.material.Material;
@@ -40,6 +41,9 @@ public class ModClientEvents {
 
     // Sink holes
     public static ArrayList<SinkHoleDrillClass> DrillSites = new ArrayList<>();
+
+    // Arrow Tracking
+    public static ArrayList<TrackedArrowsClass> TrackedArrows = new ArrayList<>();
 
     @SubscribeEvent(priority= EventPriority.LOWEST)
     public static void LandHardEvent(LivingDamageEvent event) {
@@ -135,6 +139,21 @@ public class ModClientEvents {
                     }
                 } else {
                     UUIDs.remove(i);
+                }
+            }
+        }
+
+        if (!TrackedArrows.isEmpty()){
+            for (TrackedArrowsClass CurrentClass : TrackedArrows){
+                if (!CurrentClass.TrackedBlocks.contains(CurrentClass.TrackedArrow.getPosition())){
+                    CurrentClass.TrackedBlocks.add(CurrentClass.TrackedArrow.getPosition());
+                    CurrentClass.Lifetime.add(100);
+                }
+
+                for (BlockPos blockPos : CurrentClass.TrackedBlocks){
+                    if (blockPos.getX() == CurrentClass.TrackedPlayer.getPosX() && blockPos.getZ() == CurrentClass.TrackedPlayer.getPosZ()){
+                        CurrentClass.TrackedWorld.createExplosion(CurrentClass.TrackedPlayer, CurrentClass.TrackedPlayer.getPosX(),CurrentClass.TrackedPlayer.getPosY(),CurrentClass.TrackedPlayer.getPosZ(), 1, Explosion.Mode.NONE);
+                    }
                 }
             }
         }

@@ -46,8 +46,8 @@ public class RegistryHandler {
             new BlenderItem(ModItemTier.SIZERTOOLS, 5, -2.4F, new Item.Properties().group(KivSizer.TAB)));
     public static final RegistryObject<SwordItem> SINKHOLE_DRILL = ITEMS.register("sinkhole_drill", () ->
             new SinkHoleDrillItem(ModItemTier.SIZERTOOLS, -2, -2.4F, new Item.Properties().group(KivSizer.TAB)));
-    public static final RegistryObject<SwordItem> ROCKET_LAUNCHER = ITEMS.register("rocket_launcher", () ->
-            new RocketLauncherItem(ModItemTier.SIZERTOOLS, 0, -2.4F, new Item.Properties().group(KivSizer.TAB)));
+    public static final RegistryObject<BowItem> ROCKET_LAUNCHER = ITEMS.register("rocket_launcher", () ->
+            new RocketLauncherItem(new Item.Properties().group(KivSizer.TAB)));
     public static final RegistryObject<SwordItem> FIREBALL_BOW = ITEMS.register("fireball_bow", () ->
             new FireballBowItem(ModItemTier.SIZERTOOLS, 0, -2.4F, new Item.Properties().group(KivSizer.TAB)));
     public static final RegistryObject<BowItem> TNT_BOW = ITEMS.register("tnt_bow", () ->

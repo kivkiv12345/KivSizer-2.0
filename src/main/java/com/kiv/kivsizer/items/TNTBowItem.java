@@ -1,6 +1,7 @@
 package com.kiv.kivsizer.items;
 
 import com.kiv.kivsizer.KivSizer;
+import com.kiv.kivsizer.entities.BowTNT;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.enchantment.Enchantments;
 import net.minecraft.entity.LivingEntity;
@@ -24,7 +25,7 @@ import java.util.ArrayList;
 
 public class TNTBowItem extends BowItem {
 
-    public static ArrayList<TNTEntity> SavedTNTs = new ArrayList<TNTEntity>();
+    public static ArrayList<BowTNT> SavedTNTs = new ArrayList<>();
     public static PlayerEntity bowHolder = null;
 
     public TNTBowItem(Properties builder) {
@@ -64,10 +65,18 @@ public class TNTBowItem extends BowItem {
                             p_220009_1_.sendBreakAnimation(playerentity.getActiveHand());
                         });
 
+                        boolean setfire = false;
+                        if (EnchantmentHelper.getEnchantmentLevel(Enchantments.FLAME, stack) > 0) {
+                            setfire = true;
+                        }
+
                         Vector3d look = entityLiving.getLookVec();
-                        TNTEntity tntEntity = new TNTEntity(worldIn, entityLiving.getPosX() + look.x * 1.5D, entityLiving.getPosY() + look.y * 1.5D + 1, entityLiving.getPosZ() + look.z * 1.5D, playerentity);
+                        BowTNT tntEntity = new BowTNT(worldIn, entityLiving.getPosX() + look.x * 1.5D, entityLiving.getPosY() + look.y * 1.5D + 1, entityLiving.getPosZ() + look.z * 1.5D, playerentity);
                         tntEntity.setVelocity(look.x * 1.0D * f, look.y * 1.0D * f, look.z * 1.0D * f);
                         tntEntity.setFuse(tntEntity.getFuse()*2);
+                        if (setfire) {
+                            tntEntity.setFire(100);
+                        }
                         SavedTNTs.add(tntEntity);
                         worldIn.addEntity(tntEntity);
 
