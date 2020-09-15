@@ -24,6 +24,7 @@ import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import org.omg.CORBA.Current;
 
 import java.util.ArrayList;
 import java.util.UUID;
@@ -143,16 +144,22 @@ public class ModClientEvents {
             }
         }
 
+        // Code for tracked arrows
         if (!TrackedArrows.isEmpty()){
+            //KivSizer.LOGGER.info("TrackedArrows was not empty");
             for (TrackedArrowsClass CurrentClass : TrackedArrows){
                 if (!CurrentClass.TrackedBlocks.contains(CurrentClass.TrackedArrow.getPosition())){
+                    KivSizer.LOGGER.info("Current arrow at index " + TrackedArrows.indexOf(CurrentClass) + " was at a new block");
                     CurrentClass.TrackedBlocks.add(CurrentClass.TrackedArrow.getPosition());
                     CurrentClass.Lifetime.add(100);
                 }
 
                 for (BlockPos blockPos : CurrentClass.TrackedBlocks){
-                    if (blockPos.getX() == CurrentClass.TrackedPlayer.getPosX() && blockPos.getZ() == CurrentClass.TrackedPlayer.getPosZ()){
-                        CurrentClass.TrackedWorld.createExplosion(CurrentClass.TrackedPlayer, CurrentClass.TrackedPlayer.getPosX(),CurrentClass.TrackedPlayer.getPosY(),CurrentClass.TrackedPlayer.getPosZ(), 1, Explosion.Mode.NONE);
+                    //KivSizer.LOGGER.info("Checked if " + CurrentClass.TrackedPlayer.getName().getString() + " was at a block");
+                    KivSizer.LOGGER.info("Checked if " + event.player.getPosX() + ", " + event.player.getPosZ() + " was same as " + blockPos.getX() + ", " + blockPos.getZ());
+                    if (blockPos.getX() == (int)event.player.getPosX() && blockPos.getZ() == (int)event.player.getPosZ()){
+                        KivSizer.LOGGER.info("Ran this!");
+                        //CurrentClass.TrackedWorld.createExplosion(CurrentClass.TrackedPlayer, CurrentClass.TrackedPlayer.getPosX(),CurrentClass.TrackedPlayer.getPosY(),CurrentClass.TrackedPlayer.getPosZ(), 1, Explosion.Mode.NONE);
                     }
                 }
             }
