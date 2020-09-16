@@ -3,6 +3,7 @@ package com.kiv.kivsizer.events;
 import com.kiv.kivsizer.KivSizer;
 import com.kiv.kivsizer.util.SinkHoleDrillClass;
 import com.kiv.kivsizer.util.TrackedArrowsClass;
+import net.minecraft.advancements.criterion.CuredZombieVillagerTrigger;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.material.Material;
@@ -45,6 +46,9 @@ public class ModClientEvents {
 
     // Arrow Tracking
     public static ArrayList<TrackedArrowsClass> TrackedArrows = new ArrayList<>();
+    public static ArrayList<TrackedArrowsClass> ArrowCleanup = new ArrayList<>();
+    //public static ArrayList<BlockPos> CleanBlocks = new ArrayList<>();
+
 
     @SubscribeEvent(priority= EventPriority.LOWEST)
     public static void LandHardEvent(LivingDamageEvent event) {
@@ -116,6 +120,70 @@ public class ModClientEvents {
     }
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
+    public static void WorldTickEvent(TickEvent.WorldTickEvent event){
+        // Code for tracked arrows
+        //ArrayList<TrackedArrowsClass> ArrowCleanup = new ArrayList<>();
+        try {
+            if (!TrackedArrows.isEmpty()){
+                for (TrackedArrowsClass CurrentClass : TrackedArrows){
+                    if (!CurrentClass.TrackedBlocks.contains(CurrentClass.TrackedArrow.getPosition())){
+                        //KivSizer.LOGGER.info("Current arrow at index " + TrackedArrows.indexOf(CurrentClass) + " was at a new block");
+                        CurrentClass.TrackedBlocks.add(CurrentClass.TrackedArrow.getPosition());
+                        CurrentClass.Lifetime.add(10);
+                        if (CurrentClass.TrackedPlayer.getEntityWorld().getBlockState(CurrentClass.TrackedArrow.getPosition()) == Blocks.AIR.getDefaultState()) {
+                            CurrentClass.TrackedPlayer.getEntityWorld().setBlockState(CurrentClass.TrackedArrow.getPosition(), Blocks.TORCH.getDefaultState());
+                        }
+                    }
+                    if(CurrentClass.Lifetime.isEmpty()){
+                        ArrowCleanup.add(CurrentClass);
+                        //TrackedArrows.remove(CurrentClass);
+                    }
+
+                    ArrayList<BlockPos> CleanBlocks = new ArrayList<>();
+                    if (!CurrentClass.TrackedBlocks.isEmpty())
+                    {
+                        if (KivSizer.TickCounter == 0){
+                            CurrentClass.Lifetime.set(0, CurrentClass.Lifetime.get(0) - 1);
+                            if (CurrentClass.TrackedWorld.getBlockState(CurrentClass.TrackedBlocks.get(0)) != Blocks.HAY_BLOCK.getDefaultState()){
+                                CurrentClass.TrackedWorld.setBlockState(CurrentClass.TrackedBlocks.get(0), Blocks.HAY_BLOCK.getDefaultState());
+                            }
+                            if (CurrentClass.Lifetime.get(0) <= 0){
+                                CleanBlocks.add(CurrentClass.TrackedBlocks.get(0));
+                                KivSizer.LOGGER.info("Currently tracking: " + CurrentClass.TrackedBlocks.size() + " blocks");
+                            }
+                        }
+                        for (BlockPos blockPos : CurrentClass.TrackedBlocks){
+                            if (blockPos.getX() == (int)CurrentClass.TrackedPlayer.getPosX() && blockPos.getZ() == (int)CurrentClass.TrackedPlayer.getPosZ()){
+                                KivSizer.LOGGER.info("Ran this!");
+                                CurrentClass.TrackedPlayer.addPotionEffect(new EffectInstance(Effects.SPEED, 100, 1));
+                                //CurrentClass.TrackedWorld.createExplosion(CurrentClass.TrackedPlayer, CurrentClass.TrackedPlayer.getPosX(),CurrentClass.TrackedPlayer.getPosY(),CurrentClass.TrackedPlayer.getPosZ(), 1, Explosion.Mode.NONE);
+                            }
+                        }
+                    }
+                    if (!CleanBlocks.isEmpty()) {
+                        CurrentClass.TrackedPlayer.getEntityWorld().setBlockState(CleanBlocks.get(0), Blocks.AIR.getDefaultState());
+                        CurrentClass.Lifetime.remove(CurrentClass.TrackedBlocks.indexOf(CleanBlocks.get(0)));
+                        CurrentClass.TrackedBlocks.remove(CleanBlocks.get(0));
+                        if (CurrentClass.TrackedBlocks.size() < 2){
+                            //TrackedArrows.remove(CurrentClass);
+                            ArrowCleanup.add(CurrentClass);
+                        }
+                    }
+                }
+                if (!ArrowCleanup.isEmpty()){
+                    KivSizer.LOGGER.info("ArrowCleanup contains: " + ArrowCleanup.size() + " entries");
+                    for (TrackedArrowsClass CleanArrow : ArrowCleanup){
+                        TrackedArrows.remove(CleanArrow);
+                    }
+                    ArrowCleanup.clear();
+                }
+            }
+        } catch (Exception e){
+            KivSizer.LOGGER.info("Exception caught");
+        }
+    }
+
+    @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void PlayerTickEvent(TickEvent.PlayerTickEvent event) {
         if (!UUIDs.isEmpty()){
             KivSizer.LOGGER.info("UUIDs is not empty, and contains " + UUIDs.size() + " entries.");
@@ -145,25 +213,65 @@ public class ModClientEvents {
         }
 
         // Code for tracked arrows
+        //ArrayList<TrackedArrowsClass> ArrowCleanup = new ArrayList<>();
+        /*try {
         if (!TrackedArrows.isEmpty()){
-            //KivSizer.LOGGER.info("TrackedArrows was not empty");
             for (TrackedArrowsClass CurrentClass : TrackedArrows){
                 if (!CurrentClass.TrackedBlocks.contains(CurrentClass.TrackedArrow.getPosition())){
-                    KivSizer.LOGGER.info("Current arrow at index " + TrackedArrows.indexOf(CurrentClass) + " was at a new block");
+                    //KivSizer.LOGGER.info("Current arrow at index " + TrackedArrows.indexOf(CurrentClass) + " was at a new block");
                     CurrentClass.TrackedBlocks.add(CurrentClass.TrackedArrow.getPosition());
                     CurrentClass.Lifetime.add(100);
+                    if (event.player.getEntityWorld().getBlockState(CurrentClass.TrackedArrow.getPosition()) == Blocks.AIR.getDefaultState()) {
+                        event.player.getEntityWorld().setBlockState(CurrentClass.TrackedArrow.getPosition(), Blocks.TORCH.getDefaultState());
+                    }
+                }
+                if(CurrentClass.Lifetime.isEmpty()){
+                    ArrowCleanup.add(CurrentClass);
+                    //TrackedArrows.remove(CurrentClass);
                 }
 
-                for (BlockPos blockPos : CurrentClass.TrackedBlocks){
-                    //KivSizer.LOGGER.info("Checked if " + CurrentClass.TrackedPlayer.getName().getString() + " was at a block");
-                    KivSizer.LOGGER.info("Checked if " + event.player.getPosX() + ", " + event.player.getPosZ() + " was same as " + blockPos.getX() + ", " + blockPos.getZ());
-                    if (blockPos.getX() == (int)event.player.getPosX() && blockPos.getZ() == (int)event.player.getPosZ()){
-                        KivSizer.LOGGER.info("Ran this!");
-                        //CurrentClass.TrackedWorld.createExplosion(CurrentClass.TrackedPlayer, CurrentClass.TrackedPlayer.getPosX(),CurrentClass.TrackedPlayer.getPosY(),CurrentClass.TrackedPlayer.getPosZ(), 1, Explosion.Mode.NONE);
+                ArrayList<BlockPos> CleanBlocks = new ArrayList<>();
+                if (!CurrentClass.TrackedBlocks.isEmpty())
+                {
+                    KivSizer.LOGGER.info("Currently tracking: " + CurrentClass.TrackedBlocks.size() + " blocks");
+                    for (BlockPos blockPos : CurrentClass.TrackedBlocks){
+                        //KivSizer.LOGGER.info("Checked if " + CurrentClass.TrackedPlayer.getName().getString() + " was at a block");
+                        if (KivSizer.TickCounter == 0){
+                            CurrentClass.Lifetime.set(0, CurrentClass.Lifetime.get(0) - 1);
+                            if (CurrentClass.Lifetime.get(0) <= 0){
+                                //CurrentClass.Lifetime.remove(0);
+                                //CurrentClass.TrackedBlocks.remove(0);
+                                CleanBlocks.add(blockPos);
+                            }
+                        }
+                        //KivSizer.LOGGER.info("Checked if " + event.player.getPosX() + ", " + event.player.getPosZ() + " was same as " + blockPos.getX() + ", " + blockPos.getZ());
+                        if (blockPos.getX() == (int)event.player.getPosX() && blockPos.getZ() == (int)event.player.getPosZ()){
+                            KivSizer.LOGGER.info("Ran this!");
+                            event.player.setFire(5);
+                            //CurrentClass.TrackedWorld.createExplosion(CurrentClass.TrackedPlayer, CurrentClass.TrackedPlayer.getPosX(),CurrentClass.TrackedPlayer.getPosY(),CurrentClass.TrackedPlayer.getPosZ(), 1, Explosion.Mode.NONE);
+                        }
                     }
+                }
+                if (!CleanBlocks.isEmpty()) {
+                        event.player.getEntityWorld().setBlockState(CleanBlocks.get(0), Blocks.AIR.getDefaultState());
+                        CurrentClass.Lifetime.remove(CurrentClass.TrackedBlocks.indexOf(CleanBlocks.get(0)));
+                        CurrentClass.TrackedBlocks.remove(CleanBlocks.get(0));
+                        if (CurrentClass.TrackedBlocks.size() < 2){
+                            //TrackedArrows.remove(CurrentClass);
+                            ArrowCleanup.add(CurrentClass);
+                        }
+                }
+            }
+            if (!ArrowCleanup.isEmpty()){
+                KivSizer.LOGGER.info("ArrowCleanup was not empty!");
+                for (TrackedArrowsClass CleanArrow : ArrowCleanup){
+                    TrackedArrows.remove(CleanArrow);
                 }
             }
         }
+        } catch (Exception e){
+
+        }*/
 
         // Tick Counter
         int MaxTicks = 7;
