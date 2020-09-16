@@ -10,6 +10,7 @@ import net.minecraft.block.material.Material;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Items;
+import net.minecraft.particles.ParticleTypes;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.potion.Effects;
 import net.minecraft.util.DamageSource;
@@ -28,6 +29,7 @@ import net.minecraftforge.fml.common.Mod;
 import org.omg.CORBA.Current;
 
 import java.util.ArrayList;
+import java.util.Random;
 import java.util.UUID;
 
 @Mod.EventBusSubscriber(modid = KivSizer.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)//, value = Dist.CLIENT)
@@ -144,15 +146,17 @@ public class ModClientEvents {
                     {
                         if (KivSizer.TickCounter == 0){
                             CurrentClass.Lifetime.set(0, CurrentClass.Lifetime.get(0) - 1);
-                            if (CurrentClass.TrackedWorld.getBlockState(CurrentClass.TrackedBlocks.get(0)) != Blocks.HAY_BLOCK.getDefaultState()){
+                            /*if (CurrentClass.TrackedWorld.getBlockState(CurrentClass.TrackedBlocks.get(0)) != Blocks.HAY_BLOCK.getDefaultState()){
                                 CurrentClass.TrackedWorld.setBlockState(CurrentClass.TrackedBlocks.get(0), Blocks.HAY_BLOCK.getDefaultState());
-                            }
+                            }*/
                             if (CurrentClass.Lifetime.get(0) <= 0){
                                 CleanBlocks.add(CurrentClass.TrackedBlocks.get(0));
                                 KivSizer.LOGGER.info("Currently tracking: " + CurrentClass.TrackedBlocks.size() + " blocks");
                             }
                         }
                         for (BlockPos blockPos : CurrentClass.TrackedBlocks){
+                            Random random = CurrentClass.TrackedWorld.getRandom();
+                            CurrentClass.TrackedWorld.addParticle(ParticleTypes.SMOKE, (double)blockPos.getX() + 0.25D + random.nextDouble() / 2.0D * (double)(random.nextBoolean() ? 1 : -1), (double)blockPos.getY() + 0.4D, (double)blockPos.getZ() + 0.25D + random.nextDouble() / 2.0D * (double)(random.nextBoolean() ? 1 : -1), 0.0D, 0.005D, 0.0D);
                             if (blockPos.getX() == (int)CurrentClass.TrackedPlayer.getPosX() && blockPos.getZ() == (int)CurrentClass.TrackedPlayer.getPosZ()){
                                 KivSizer.LOGGER.info("Ran this!");
                                 CurrentClass.TrackedPlayer.addPotionEffect(new EffectInstance(Effects.SPEED, 100, 1));

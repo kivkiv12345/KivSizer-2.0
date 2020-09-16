@@ -54,6 +54,8 @@ public class RegistryHandler {
             new TNTBowItem(new Item.Properties().group(KivSizer.TAB)));
     public static final RegistryObject<BowItem> BOWBLAZER = ITEMS.register("bowblazer", () ->
             new BowBlazerItem(new Item.Properties().group(KivSizer.TAB)));
+    public static final RegistryObject<BowItem> BOWOFLINGERING = ITEMS.register("bowoflingering", () ->
+            new BowOfLingering(new Item.Properties().group(KivSizer.TAB)));
     public static final RegistryObject<ToolItem> SLICESLICER = ITEMS.register("sliceslicer", () ->
             new SliceSlicerItem(0,-2.4f, ModItemTier.SIZERTOOLS, EFFECTIVE_ON_NONE, new Item.Properties().group(KivSizer.TAB).maxDamage(200)));
 
