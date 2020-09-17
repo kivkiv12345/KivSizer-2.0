@@ -1,42 +1,37 @@
 package com.kiv.kivsizer.items;
 
-import com.kiv.kivsizer.KivSizer;
-import com.kiv.kivsizer.entities.BoostedRocketEntity;
 import com.kiv.kivsizer.events.ModClientEvents;
-import com.kiv.kivsizer.tools.ModItemTier;
-import com.kiv.kivsizer.util.RegistryHandler;
+import com.kiv.kivsizer.util.ReverseBowArrowsClass;
 import com.kiv.kivsizer.util.TrackedArrowsClass;
 import com.kiv.kivsizer.util.helpers.KeyboardHelper;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.enchantment.Enchantments;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.item.TNTEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.AbstractArrowEntity;
-import net.minecraft.entity.projectile.FireworkRocketEntity;
-import net.minecraft.item.*;
+import net.minecraft.item.ArrowItem;
+import net.minecraft.item.BowItem;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.stats.Stats;
-import net.minecraft.util.*;
-import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.util.SoundCategory;
+import net.minecraft.util.SoundEvents;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.World;
 
 import java.util.List;
-import java.util.Objects;
 
-public class RocketLauncherItem extends BowItem {
-    public RocketLauncherItem(Properties builder) {
+public class ReverseBowItem extends BowItem {
+    public ReverseBowItem(Properties builder) {
         super(builder);
     }
 
     @Override
     public void addInformation(ItemStack stack, World worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn) {
         if(KeyboardHelper.isHoldingShift()) {
-            tooltip.add(new StringTextComponent("Creates a field of speed where the arrow flies!"));
+            tooltip.add(new StringTextComponent("Subverts Expectations"));
         } else {
             tooltip.add(new StringTextComponent("Hold SHIFT for more information"));
         }
@@ -92,7 +87,7 @@ public class RocketLauncherItem extends BowItem {
                             abstractarrowentity.pickupStatus = AbstractArrowEntity.PickupStatus.CREATIVE_ONLY;
                         }
 
-                        ModClientEvents.TrackedArrows.add(new TrackedArrowsClass(playerentity, abstractarrowentity, worldIn));
+                        ModClientEvents.ReverseArrows.add(new ReverseBowArrowsClass(10, playerentity, abstractarrowentity, worldIn));
                         worldIn.addEntity(abstractarrowentity);
                     }
 

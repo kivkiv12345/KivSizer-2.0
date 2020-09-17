@@ -13,5 +13,7 @@
   "item.kivsizer.bowblazer": "Bowblazer",
   "item.kivsizer.sliceslicer": "Slice Slicer",
   "item.kivsizer.bowoflingering": "Bow of Lingering",
-  "enchantment.kivsizer.sink_hole": "Sink Hole"
+  "item.kivsizer.reverse_bow": "Bow of Reverse",
+  "enchantment.kivsizer.sink_hole": "Sink Hole",
+  "enchantment.kivsizer.swiftness_field": "Swiftness Field"
 }

@@ -3,6 +3,7 @@ package com.kiv.kivsizer.util;
 import com.google.common.collect.ImmutableSet;
 import com.kiv.kivsizer.KivSizer;
 import com.kiv.kivsizer.enchantments.SinkHoleEnchantment;
+import com.kiv.kivsizer.enchantments.SwiftnessFieldEnchantment;
 import com.kiv.kivsizer.items.*;
 import com.kiv.kivsizer.tools.ModItemTier;
 import net.minecraft.block.Block;
@@ -55,9 +56,11 @@ public class RegistryHandler {
     public static final RegistryObject<BowItem> BOWBLAZER = ITEMS.register("bowblazer", () ->
             new BowBlazerItem(new Item.Properties().group(KivSizer.TAB)));
     public static final RegistryObject<BowItem> BOWOFLINGERING = ITEMS.register("bowoflingering", () ->
-            new BowOfLingering(new Item.Properties().group(KivSizer.TAB)));
+            new BowOfLingeringItem(new Item.Properties().group(KivSizer.TAB)));
     public static final RegistryObject<ToolItem> SLICESLICER = ITEMS.register("sliceslicer", () ->
             new SliceSlicerItem(0,-2.4f, ModItemTier.SIZERTOOLS, EFFECTIVE_ON_NONE, new Item.Properties().group(KivSizer.TAB).maxDamage(200)));
+    public static final RegistryObject<BowItem> REVERSE_BOW = ITEMS.register("reverse_bow", () ->
+            new ReverseBowItem(new Item.Properties().group(KivSizer.TAB)));
 
     // Blocks
 
@@ -67,6 +70,7 @@ public class RegistryHandler {
 
     // Enchantments
     public static final RegistryObject<Enchantment> SINK_HOLE = ENCHANTMENTS.register("sink_hole", () -> new SinkHoleEnchantment(Enchantment.Rarity.RARE, EnchantmentType.WEAPON, new EquipmentSlotType[]{EquipmentSlotType.MAINHAND, EquipmentSlotType.OFFHAND}));
+    public static final RegistryObject<Enchantment> SWIFTNESS_FIELD = ENCHANTMENTS.register("swiftness_field", () -> new SwiftnessFieldEnchantment(Enchantment.Rarity.RARE, EnchantmentType.BOW, new EquipmentSlotType[]{EquipmentSlotType.MAINHAND, EquipmentSlotType.OFFHAND}));
 
     // Effects
     //public static final RegistryObject<Effect> SINK_HOLE_EFFECT = EFFECTS.register(200, "sink_hole_effect", (new SinkHoleEffect(EffectType.HARMFUL, 4866583)).addAttributesModifier(Attributes.field_233825_h_, "55FCED67-E92A-486E-9800-B47F202C4386", (double)-0.1F, AttributeModifier.Operation.MULTIPLY_TOTAL));

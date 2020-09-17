@@ -32,8 +32,8 @@ import net.minecraftforge.fml.common.Mod;
 import java.util.ArrayList;
 import java.util.List;
 
-public class BowOfLingering extends BowItem {
-    public BowOfLingering(Properties builder) {
+public class BowOfLingeringItem extends BowItem {
+    public BowOfLingeringItem(Properties builder) {
         super(builder);
     }
 
